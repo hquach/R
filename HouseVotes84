@@ -134,7 +134,7 @@ str(nbcm)
 # Confusion Matrix and Statistics using Caret library
 nbcm
 
-tab0<-table(nbresult,ytestdata$Class)
+tab0<-table(nbresult,testdata$Class)
 tab0
 
 prop.table(table(nbcm))
