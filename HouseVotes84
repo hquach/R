@@ -137,9 +137,6 @@ nbcm
 tab0<-table(nbresult,testdata$Class)
 tab0
 
-prop.table(table(nbcm))
-
-
 #diag(tab0)/apply(tab0, 2, sum)
 ```
 
@@ -174,7 +171,7 @@ nbcm2<-confusionMatrix(nbresult2, testdata$Class)
 str(nbcm2)
 
 # Confusion Matrix and Statistics using Caret library
-nbcm
+nbcm2
 
 tab1<-table(nbresult2,testdata$Class)
 tab1
