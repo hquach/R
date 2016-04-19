@@ -1,5 +1,39 @@
 ##### Chapter 5: Classification using Decision Trees and Rules -------------------
 
+#### Step 1 -- collecting the data
+
+#### The credit data is from the UCI Machine Learning Data Repository.
+
+#### Note that the data is from Germany and the currency is in Deutsche Marks (DM).
+
+#### Step 2: exploring and preparing the data
+
+#### To randomize the dataset the following R code is used to randomize the index.
+
+#### set.seed(123)
+
+#### train_sample <- sample(1000, 900)
+
+#### credit_train <- credit[train_sample, ]
+
+#### credit_test <- credit[-train_sample, ]
+
+
+
+#### Step 4 -- evaluating model performance
+
+#### Using the training data evaluate the model.
+
+#### Model only predicted 50% of the defaulted loans. Not so good.
+
+
+
+#### Step 5 -- Improve model performance
+#### Adaptive Boosting
+
+
+
+
 #### Part 1: Decision Trees -------------------
 
 ## Understanding Decision Trees ----
