@@ -1,0 +1,190 @@
+ 
+#HouseVotes84 Data Set
+
+### Five Steps
+
+##1. Data Collection
+
+The Congressional Voting Records of 1984 data set was fetched from the 'mlbench' library package in R. This data set contains a collection of all final voting from both Democrats and Republicans on various laws.
+
+##2. Data Exploration and Prepartion
+
+We will be exploring and preparing the dataset for use with the Naïve Bayes classification machine learning algorithm. First we will fetch the data and fetch the first five rows of observations.
+
+```{r }
+data(HouseVotes84, package = "mlbench")
+head(HouseVotes84, 5)
+```
+
+As you can see from the first five rows of observations, we have quite a few cells containing <NA> or missing values. We will deal these missing values later.
+
+Next, we will load R's Naive Bayes library 'e1071' for classification. Second, we will display the data structure for 'HouseVotes84' followed by the total number of Democrats and Republicans in our data set.
+
+```{r }
+library(e1071)
+
+str(HouseVotes84)
+table(HouseVotes84$Class)
+```
+
+We see that there are 267 total observations were labeled as Democrats and 168 total observations were labeled Republicans.
+
+```{r }
+# use the following if Class variables have not been factored
+#HouseVotes84$Class <- factor(HouseVotes84$Class)
+#str(HouseVotes84$Class)
+#table(HouseVotes84$Class)
+```
+
+Before we begin implementing Naive Bayes algorithm, it is a good idea to explore our data visually by producing a few bar charts.
+
+```{r }
+plot(as.factor(HouseVotes84[,2]))
+title(main="Vote cast for issue", xlab="vote", ylab="# reps")
+
+plot(as.factor(HouseVotes84[HouseVotes84$Class=='republican', 2]))
+title(main='Republican votes cast for issue 1', xlab='vote', ylab='#reps')
+
+plot(as.factor(HouseVotes84[HouseVotes84$Class=='democrat', 2]))
+title(main='Democrat votes cast for issue 1', xlab='vote', ylab='#reps')
+```
+
+
+Next, let's produce a function to return the number of NAs by vote and political party (Democrat and Republican).
+
+```{r }
+na_by_col_class <- function (col, cls) {
+  return(sum(is.na(HouseVotes84[,col]) & HouseVotes84$Class==cls))
+}
+```
+
+
+##Training and Test Data Sets
+
+We’ll divide the data into two portions: 400 observations for training and the remaining for testing. 
+
+```{r }
+#let first 400 are training data and last 35 are test data
+trainingdata <- head(HouseVotes84,400)
+testdata<-head(HouseVotes84,-400)
+
+table(HouseVotes84$Class)
+table(trainingdata$Class)
+table(testdata$Class)
+```
+
+
+##Training the Model Data Set 
+
+Now that we have correctly divided our training and test data sets, we will proceed and apply the Naive Bayes algorithm. A Naive Bayes algorithm is trained and used for classification in separate stages.
+
+The Naive Bayes implementation we will employ is in the e1071 package. This package was developed in the statistics department of the Vienna University of Technology (TU Wien), and includes a variety of functions for machine learning.
+
+```{r }
+library(e1071)
+
+modelposteriorprob <- naiveBayes(Class ~ ., data = trainingdata, type = "raw")
+modelposteriorprob
+
+nbmodel <- naiveBayes(Class ~ ., data = trainingdata)
+nbmodel
+
+```
+
+The nbmodel object now contains a naiveBayes classifier object that can be used to make predictions.
+
+##Step 4: Evaluating model performance
+
+We will apply the predict() function used to make the predictions.
+
+```{r }
+nbresult <- predict(nbmodel, testdata)
+```
+
+Let’s compare the proportion of the political parties in the training and test data frames:
+
+```{r }
+nbresult
+prop.table(table(nbresult))
+```
+
+##Interpretation
+
+As you can see from the results above, it suggests that the data sets were divided evenly.
+
+Next, I will be using the caret library to utilize the confusionMatrix function and produce a Naive Bayes statistical report provided by the caret library.
+
+
+```{r }
+library(caret)
+library(lattice)
+library(ggplot2)
+library(gmodels)
+
+nbcm<-confusionMatrix(nbresult, testdata$Class)
+
+str(nbcm)
+
+# Confusion Matrix and Statistics using Caret library
+nbcm
+
+tab0<-table(nbresult,testdata$Class)
+tab0
+
+#diag(tab0)/apply(tab0, 2, sum)
+```
+
+As you can see from Caret's library Confusion Matrix and Statistical report,  2+0 = 2 / 33 of the votes were incorrectly misclassified (0.0606%). Thats approximately 94.29% of the votes were correctly classified. Thus, this level of performance seems quite impressive. This case study exemplifies the reason why Naive Bayes is the standard for text classification; directly out of the box, it performs surprisingly well.
+
+##Step 5 - Improving model performance
+
+```{r }
+modelposteriorprob2 <- naiveBayes(Class ~ ., data = trainingdata, type = "raw", laplace = 1)
+
+modelposteriorprob2
+
+nbmodel2 <- naiveBayes(Class ~ ., data = trainingdata)
+nbmodel2
+```
+
+
+```{r }
+nbresult2 <- predict(nbmodel2, testdata)
+```
+
+
+```{r }
+nbresult2
+prop.table(table(nbresult2))
+```
+
+
+```{r }
+nbcm2<-confusionMatrix(nbresult2, testdata$Class)
+
+str(nbcm2)
+
+# Confusion Matrix and Statistics using Caret library
+nbcm2
+
+tab1<-table(nbresult2,testdata$Class)
+tab1
+
+
+```
+
+##Steps 5 - Summary
+
+Adding the Laplace estimator made no difference to the false positives. False positives remained identical from previously.
+
+
+##References
+
+Lantz, Brett. Machine Learning with R. 2nd ed. Birmingham: Packt Publishing Ltd, 2015. Print.
+
+
+
+EOF
+
+
+##
